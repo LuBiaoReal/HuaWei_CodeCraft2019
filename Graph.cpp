@@ -57,35 +57,8 @@ int GraphLink::checkWhichMap(std::string mapName) {
 	}
 }
 GraphLink::GraphLink(std::string &roadPath, std::string &crossPath, std::string &carPath, std::string &resultPath) {
-	//读取car文件之前，先初始化一下m_vecvecCar一下
-	//出发时间从1开始，而vector的下标从0开始，所以用的时候要注意减1
-	//用这种方法装，同一出发时间的车辆ID也排好了序
-	//for (int i = 0; i < 100; i++) {
-	//	std::vector<CCar>vecCar;
-	//	m_vecvecCar.push_back(vecCar);
-	//}
-	//std::cout << "........" << std::endl;
 	this->m_strResultPath = resultPath;
 	//读取基础文件
-	//对不同的地图设置不同的参数
-	//int mapNum = checkWhichMap(getMapName(carPath));
-	//if (mapNum == 1) {
-	//	//地图1
-	//	CAR_NUM = 2600;
-	//	//std::cout << "地图1" << std::endl;
-	//}
-	//else if (mapNum == 2)
-	//{
-	//	//地图2
-	//	CAR_NUM = 1250;
-	//	//std::cout << "地图2" << std::endl;
-	//}
-	//else
-	//{
-	//	//没找到图的名字
-	//	CAR_NUM = 1200;
-	//	//std::cout << "地图名字没找到" << std::endl;
-	//}
 	//----随机数-----
 	srand((unsigned)time(NULL));
 	int seed = rand() % 100;
@@ -96,14 +69,9 @@ GraphLink::GraphLink(std::string &roadPath, std::string &crossPath, std::string 
 	{
 		seed = 1;
 	}
-	if (seed == 0) {
-		//取得地图1的参数
-		CAR_NUM = 2600;
-	}
-	std::cout << "seed:" << seed << std::endl;
 	if (seed == 1) {
 		//0表示地图2
-		CAR_NUM = 1550;
+		CAR_NUM = 1420;
 	}
 	else
 	{
@@ -165,31 +133,18 @@ void GraphLink::ReadFile(const std::string path, const std::string type) {
 		//---判断文件类型---
 		int dataSize = vecLine.size();
 		if (type == "Car" && dataSize == 5) {
-			//std::cout << "Car:" << vecLine[0] << std::endl;
 			CCar car(vecLine[0], vecLine[1], vecLine[2], vecLine[3], vecLine[4]);
-			
-			//给车辆下标赋初值
-			/*carCount++;
-			car.m_nCarIndex = carCount;*/
 			//车辆入栈
 			m_vecCar.push_back(car);
-			//m_vecvecCar[vecLine[4] - 1].push_back(car);
 		}
 		else if (type == "Cross" && dataSize == 5) {
-			//std::cout << "Cross:" << vecLine[0] << std::endl;
 			CCross cross(vecLine[0], vecLine[1], vecLine[2], vecLine[3], vecLine[4]);
-			//给道路下标赋初值
-			/*crossCount++;
-			cross.m_nCrossIndex = crossCount;*/
 			//路口入栈
 			m_vecCross.push_back(cross);
 		}
 		else if (type == "Road" && dataSize == 7) {
 			//roadID, roadDistance, maxSpeed, channleNumber, startCrossID, endCrossID, isTwoWay
 			CRoad road(vecLine[0], vecLine[1], vecLine[2], vecLine[3], vecLine[4], vecLine[5], vecLine[6]);
-			//道路下标入栈
-			/*roadCount++;
-			road.m_nRoadIndex = roadCount;*/
 	        //道路入栈
 			m_vecRoad.push_back(road);
 		}
@@ -282,8 +237,6 @@ GraphLink::~GraphLink() {
 
 //取位置为i的顶点中的值
 CCross* GraphLink::GetCrossByIndex(const int index) {
-	//CCross reverseRoad;            //临时路口变量用于返回
-	//return (index >= 0 && index < m_nNumVertices) ? m_ptNodeTable[index] : reverseRoad;
 	return &m_ptNodeTable[index];
 }
 
@@ -335,11 +288,6 @@ bool GraphLink::InsertEdge(const CRoad& road) {
 	int index2 = GetCrossById(road.m_nEndID)->m_nCrossIndex;
 
 	if (index1 >= 0 && index1 < m_nNumVertices && index2 >= 0 && index2 < m_nNumVertices) {
-		//CRoad*q, *p = m_ptNodeTable[index1].m_ptOutAdj;         //v1对应的边链表头指针
-		//while (p != nullptr && p->m_nEndID - 1 != index2)       //寻找邻接顶点v2
-		//	p = p->m_ptOutLink;
-		//if (p != nullptr)                                        //找到此边，不插入
-		//	return false;
 		//否则创建新结点
 		CRoad* p = new CRoad();
 		CRoad* q = new CRoad();
@@ -964,8 +912,8 @@ void GraphLink::TrafficRules() {
 				if (++unLockedCount== UNLOCK_NUM) {
 					//到了最大解死锁的次数
 					std::cout << "ERR UnLock Falied!" << std::endl;
-					//break;
-					exit(-1);
+					break;
+					//exit(-1);
 				}
 			}
 			else

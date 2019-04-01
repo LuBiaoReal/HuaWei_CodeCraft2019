@@ -26,8 +26,6 @@ public:
 		return false;
 	}
 	
-
-	
 	//----用到了的函数----
 	//给所有通道的车设置状态
 	void DriveAllCarJustOnRoadToEndState(int channel);
@@ -61,6 +59,7 @@ public:
 	int m_nEndID;      //终点ID
 	bool m_bTwoWay;    //是否双向
 	float m_fWeight;      //道路的权：weight = len/speed;
+
 	//vector的大小为4，是表示有4个车道
 	//queue是每个车道里面车辆的具体信息，包括车辆的ID,与所在的位置
     //从m_nRoadCondition从0开始进入,0位置是第一辆车，出去从0位置删除
